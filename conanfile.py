@@ -8,6 +8,7 @@ class MongoCDriverConan(ConanFile):
     description = "A high-performance MongoDB driver for C"
     topics = ("conan", "libmongoc", "mongodb")
     url = "http://github.com/bincrafters/conan-mongo-c-driver"
+    repo_url = 'https://github.com/mongodb/mongo-c-driver.git'
     homepage = "https://github.com/mongodb/mongo-c-driver"
     license = "Apache-2.0"
     exports_sources = ["Find*.cmake", "CMakeLists.txt"]
@@ -21,7 +22,7 @@ class MongoCDriverConan(ConanFile):
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
 
-    requires = 'zlib/1.2.11'
+    requires = 'zlib/v1.2.11@conan/stable'
 
     def configure(self):
         # Because this is pure C
@@ -40,10 +41,11 @@ class MongoCDriverConan(ConanFile):
             self.requires.add("icu/64.2")
 
     def source(self):
-        tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version),
-                  sha256="ad479a6d3499038ec19ca80a30dfa99277644bb884e424362935b06e2d5f7988")
-        extracted_dir = self.name + "-" + self.version
-        os.rename(extracted_dir, self._source_subfolder)
+        #tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version),
+        #          sha256="ad479a6d3499038ec19ca80a30dfa99277644bb884e424362935b06e2d5f7988")
+        #extracted_dir = self.name + "-" + self.version
+        #os.rename(extracted_dir, self._source_subfolder)
+        self.run('git clone --progress --depth 1 --branch {} --recursive --recurse-submodules {} {}'.format(self.version, self.repo_url, self._source_subfolder))
 
     def _configure_cmake(self):
         cmake = CMake(self)
